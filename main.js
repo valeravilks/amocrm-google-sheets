@@ -16,11 +16,34 @@ console.log('123');
                 return true;
             },
             settings: function (el) {
-                let requestData = {}
+
+                async function getDataBySheet(){
+                    let data = {}
+
+                    try {
+                        data.deals = await getDeals()
+                    } catch (e) {
+                        data.deals = false
+                    }
+
+                    return data
+                }
+
+                getDataBySheet().then(rez => {
+                    console.log('Делаем запрос на гугл таблицы')
+                    fetch('https://script.google.com/macros/s/AKfycbxKqNRJpo-RFuaeFTWh01RHTS1PaRFz9_4mwtxrO3j2v8xtWlsd/exec', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(rez)
+                    }).then(ok => console.log('Успешный запрос на гугл таблицы')).catch(e => console.log('Ошибка запроса на гугл таблицу'))
+                })
 
                 getDeals().then(rez => {
                     console.log(rez)
                 })
+
+
+
 
                 async function getDeals(){
                     try {
