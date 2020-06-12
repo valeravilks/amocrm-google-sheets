@@ -16,7 +16,39 @@ console.log('123');
                 return true;
             },
             settings: function (el) {
-                console.log('In setting');
+                let requestData = {}
+
+                getDeals().then(rez => {
+                    console.log(rez)
+                })
+
+                async function getDeals(){
+                    try {
+                        let deals = [];
+                        let i = 1;
+
+                        labelWhile:
+                        while(true) {
+                            debugger
+                            let dealJson = await fetch("https://valeravilks.amocrm.com/api/v4/leads?limit=4&page=" + i)
+                            if(dealJson.status != 200) break labelWhile
+                            let deal = await dealJson.json();
+                            deals = deals.concat(deal._embedded.leads)
+                            timeout(1000)
+                            i++
+                        }
+
+                        return deals
+                    } catch (e) {
+                        console.log(e);
+                        throw new Error('Не удалось получить данные о сделке с сервера');
+
+                    }
+                }
+
+                function timeout(ms) {
+                    return new Promise(resolve => setTimeout(resolve, ms));
+                }
 
                 return true;
             },
